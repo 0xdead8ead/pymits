@@ -15,9 +15,7 @@ class OpenDSD():
         headers = {'Accept': 'application/json'}
         r = requests.get(url, headers=headers)
         complaintObject = json.loads(r.text)
-        
-        print r.text
-        
+
         if(complaintObject.get('ErrorMessage') is None):
             return None
         else:
@@ -30,9 +28,7 @@ class OpenDSD():
 
         r = requests.get(url, headers=headers)
         projectObject = json.loads(r.text)
-        
-        print r.text
-        
+
         if(projectObject.get('ErrorMessage') is None):
             return None
         else:
@@ -45,9 +41,9 @@ class OpenDSD():
 
         r = requests.get(url, headers=headers)
         approvalObject = json.loads(r.text)
-        
+
         print r.text
-        
+
         if(approvalObject.get('ErrorMessage') is None):
             return None
         else:
@@ -68,27 +64,41 @@ class OpenDSD():
         else:
             return invoiceObject
 
-    def getComplaintsByGPS(self):
+    def getRegionalComplaints(self):
+        ''' Get Complaints associated with a GPS Location area '''
         url = 'http://opendsd.sandiego.gov/api/CeCaseMapSearch/?SouthWestLatitude=32.71879985593221&SouthWestLongitude=-117.16525563507082&NorthEastLatitude=32.74399836325726&NorthEastLongitude=-117.12534436492922'
         headers = {'Accept': 'application/json'}
 
         r = requests.get(url, headers=headers)
         regionalComplaints = json.loads(r.text)
-        print r.text
-
-        if(regionalComplaints.get('ErrorMessage') is None):
-            return None
-        else:
-            return regionalComplaints
+        #print r.text
+        #print regionalComplaints
+        complaintList = []
+        for complaint in regionalComplaints:
+            if(complaint is not None):
+                #print complaint
+                complaintList.append(complaint)
+        return complaintList
 
     def scrapeComplaints(self):
         for id in range(200000, 222222):
             self.getCodeEnforce(str(id))
+
+    def findGraphiti(self, complaintList):
+        ''' Finds complaints of Graffiti '''
+        graffitiComplaints = []
+        for complaint in complaintList:
+            if('graffiti' in complaint.get('Description').lower()):
+                print '\nCase #: %s\nDescription:\t%s' % (complaint.get('CaseId'), complaint.get('Description'))
+                graffitiComplaints.append({'caseId': complaint.get('CaseId'), 'graffitiDesc:': complaint.get('Description'), 'longitude': complaint.get('Longitude'), 'latitude': complaint.get('Latitude')})
+        #print graffitiComplaints
+        return graffitiComplaints
 
 
 if __name__ == '__main__':
     dsd = OpenDSD()
     #dsd.getCodeEnforce('122556')
     #dsd.scrapeComplaints()
-    dsd.getComplaintsByGPS()
-
+    complaints = dsd.getRegionalComplaints()
+    print complaints
+    dsd.findGraphiti(complaints)
