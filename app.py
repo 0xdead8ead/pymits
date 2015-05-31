@@ -16,13 +16,23 @@ class HelloHandler(tornado.web.RequestHandler):
 
 
 class GraffitiHandler(tornado.web.RequestHandler):
+    ''' Get Graphiti based on GPS Coordinate Area '''
+
+    ''' TEST URL: http://localhost:8888/graffiti?swlat=32.71879985593221&swlong=-117.16525563507082&nelat=32.74399836325726&nelong=-117.12534436492922 '''
+
     def get(self):
         dsd = opendsd.OpenDSD()
 
-        swlat = '32.71879985593221'
-        swlong = '-117.16525563507082'
-        nelat = '32.74399836325726'
-        nelong = '-117.12534436492922'
+        #swlat = '32.71879985593221'
+        #swlong = '-117.16525563507082'
+        #nelat = '32.74399836325726'
+        #nelong = '-117.12534436492922'
+
+        # Search Area Parameters
+        swlat = self.get_argument('swlat', '')
+        swlong = self.get_argument('swlong', '')
+        nelat = self.get_argument('nelat', '')
+        nelong = self.get_argument('nelong', '')
 
         complaints = dsd.getRegionalComplaints(swlat, swlong, nelat, nelong)
         print complaints
@@ -30,6 +40,8 @@ class GraffitiHandler(tornado.web.RequestHandler):
         response = json.dumps(graffitiComplaints)
         self.write(response)
 
+    def post(self):
+        pass
 
 application = tornado.web.Application([
     (r"/hello", HelloHandler),
