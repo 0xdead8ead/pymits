@@ -64,9 +64,15 @@ class OpenDSD():
         else:
             return invoiceObject
 
-    def getRegionalComplaints(self):
+    def getRegionalComplaints(self, swlat, swlong, nelat, nelong):
         ''' Get Complaints associated with a GPS Location area '''
-        url = 'http://opendsd.sandiego.gov/api/CeCaseMapSearch/?SouthWestLatitude=32.71879985593221&SouthWestLongitude=-117.16525563507082&NorthEastLatitude=32.74399836325726&NorthEastLongitude=-117.12534436492922'
+
+        swlat = '32.71879985593221'
+        swlong = '-117.16525563507082'
+        nelat = '32.74399836325726'
+        nelong = '-117.12534436492922'
+
+        url = 'http://opendsd.sandiego.gov/api/CeCaseMapSearch/?SouthWestLatitude=%s&SouthWestLongitude=%s&NorthEastLatitude=%s&NorthEastLongitude=%s' % (swlat, swlong, nelat, nelong)
         headers = {'Accept': 'application/json'}
 
         r = requests.get(url, headers=headers)

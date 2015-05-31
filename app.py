@@ -18,7 +18,13 @@ class HelloHandler(tornado.web.RequestHandler):
 class GraffitiHandler(tornado.web.RequestHandler):
     def get(self):
         dsd = opendsd.OpenDSD()
-        complaints = dsd.getRegionalComplaints()
+
+        swlat = '32.71879985593221'
+        swlong = '-117.16525563507082'
+        nelat = '32.74399836325726'
+        nelong = '-117.12534436492922'
+
+        complaints = dsd.getRegionalComplaints(swlat, swlong, nelat, nelong)
         print complaints
         graffitiComplaints = dsd.findGraphiti(complaints)
         response = json.dumps(graffitiComplaints)
