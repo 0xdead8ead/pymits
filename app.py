@@ -8,6 +8,8 @@ import tornado.web
 import opendsd
 import json
 import graffitiimgur
+import StringIO
+from PIL import Image
 
 
 class HelloHandler(tornado.web.RequestHandler):
@@ -51,8 +53,25 @@ class GraffitiUploadHandler(tornado.web.RequestHandler):
     ''' TEST URL: http://localhost:8888/graffiti?swlat=32.71879985593221&swlong=-117.16525563507082&nelat=32.74399836325726&nelong=-117.12534436492922 '''
 
     def get(self):
+        response = '<h4>Upload GraffitiPic</h4><form enctype="multipart/form-data" action="/graffitiImgageUpload" method="post"><input type="file" name="graffitiPic"><input type="submit"></form>'
+        #graff = graffitiimgur.GraffitiUpload()
+        #link = graff.uploadGraffiti('graffiti_devil.jpg')
+        #print 'Imgur Link:\t%s' % link
+        #response = link
+        self.write(response)
+
+    def post(self):
+        file_body = self.request.files['graffitiPic'][0]['body']
+        filename = self.request.files['graffitiPic'][0]['filename']
+        #img = Image.open(StringIO.StringIO(file_body))
+        #img.save("imgages/")
+        output_file = open("images/" + filename, 'w')
+        output_file.write(file_body)
+
+        #print self.request.files
+
         graff = graffitiimgur.GraffitiUpload()
-        link = graff.uploadGraffiti('graffiti_devil.jpg')
+        link = graff.uploadGraffiti(filename)
         print 'Imgur Link:\t%s' % link
         response = link
         self.write(response)
