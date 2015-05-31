@@ -7,6 +7,7 @@ import tornado.ioloop
 import tornado.web
 import opendsd
 import json
+import graffitiimgur
 
 
 class HelloHandler(tornado.web.RequestHandler):
@@ -43,9 +44,24 @@ class GraffitiHandler(tornado.web.RequestHandler):
     def post(self):
         pass
 
+
+class GraffitiUploadHandler(tornado.web.RequestHandler):
+    ''' Get Graphiti based on GPS Coordinate Area '''
+
+    ''' TEST URL: http://localhost:8888/graffiti?swlat=32.71879985593221&swlong=-117.16525563507082&nelat=32.74399836325726&nelong=-117.12534436492922 '''
+
+    def get(self):
+        graff = graffitiimgur.GraffitiUpload()
+        link = graff.uploadGraffiti('graffiti_devil.jpg')
+        print 'Imgur Link:\t%s' % link
+        response = link
+        self.write(response)
+
+
 application = tornado.web.Application([
     (r"/hello", HelloHandler),
-    (r"/graffiti", GraffitiHandler)
+    (r"/graffiti", GraffitiHandler),
+    (r"/graffitiImgageUpload", GraffitiUploadHandler)
 ])
 
 if __name__ == "__main__":
